@@ -34,6 +34,7 @@ shapeFactory.prototype.createShape = function(options){
     return new this.type(options);
 }
 
+//Sample Usage
 var myFactory = new shapeFactory();
 var circle = myFactory.createShape({type:'circle',radius:2});
 console.log(circle.getArea());
