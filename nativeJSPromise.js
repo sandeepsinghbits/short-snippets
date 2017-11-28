@@ -44,5 +44,6 @@ p1.promise.then(function success(obj){
   return obj;
 });
 
-p1.resolve({name:"sandeep"});
-
+setTimeout(function(){
+  p1.resolve({name:"sandeep"});
+},2000);
