@@ -21,13 +21,13 @@ function promise(fn){
    fn(resolve,reject);
 }
 
+//Sample Usage
 var p1 = new promise((resolve,reject)=>{
    setTimeout(()=>{
       resolve({'name':'sandeep'});
    },2000);
 })
 
-//Sample Usage
 p1.then(function success(data){
    console.log("success",data);
    return data
