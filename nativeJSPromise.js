@@ -15,8 +15,8 @@ var $q = (function (){
                 val = val.resolvedValue;
                 clearInterval(interval);
                 interval = null;
+                i++;
                 if(i<iterationArray.length){
-                  i++;
                   iterate(iterationArray[i]);
                 }
               
@@ -64,10 +64,11 @@ var $q = (function (){
 var p1 = $q.defer();
 var p2 = $q.defer();
 p1.then(function success(obj){
+  console.log("resolved p1", obj);
   return p2;
 }).then(function success(obj){
-  console.log("resolved",obj);
-});
+  console.log("resolved p2",obj);
+})
 
 setTimeout(function(){
   p1.resolve({name:"p1"});
