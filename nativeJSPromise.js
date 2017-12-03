@@ -12,13 +12,13 @@ var $q = (function (){
         if(val && val.then){
           interval = setInterval(function(){
              if(val.resolvedValue !==null){
-              val = val.resolvedValue;
-              if(i<iterationArray.length){
+                val = val.resolvedValue;
                 clearInterval(interval);
                 interval = null;
-                i++;
-                iterate(iterationArray[i]);
-              }
+                if(i<iterationArray.length){
+                  i++;
+                  iterate(iterationArray[i]);
+                }
               
              }
           },0);
