@@ -1,26 +1,54 @@
-
 var $q = (function (){
 
   function promise(){
-    var success=[],failure=[];
-    this.promise = {
-      then:function(successFn,failureFn){
+    var success=[];
+    var failure=[];
+    this.resolvedValue =null;
+    var interval = null;
+    function execFunction(iterationArray,resolvedObj){
+      var val = resolvedObj,i=0;
+      function iterate(iteration){
+        val = iteration(val);
+        if(val && val.then){
+          interval = setInterval(function(){
+             if(val.resolvedValue !==null){
+                val = val.resolvedValue;
+                clearInterval(interval);
+                interval = null;
+                i++;
+                if(i<iterationArray.length){
+                  iterate(iterationArray[i]);
+                }
+              
+             }
+          },0);
+        }else if(interval ==null){
+          i++;
+          if(i<iterationArray.length){
+            iterate(iterationArray[i]);
+          }
+        }
+        return;
+      }
+      iterate(iterationArray[i]);
+    }
+    this.then = function(successFn,failureFn){
         success.push(successFn);
         failure.push(failureFn);
         return this;
       }
-    };
     this.resolve = function(obj){
-      var val = obj;
-      success.forEach(function(fun){
-        val = fun(val);
-      });
+      this.resolvedValue = obj;
+      if(success.length > 0){
+        execFunction(success,obj);
+      }
+
     };
     this.reject = function(obj){
-      var val = obj;
-      failure.forEach(function(fun){
-        val = fun(val);
-      });
+      this.resolvedValue = obj;
+      if(failure.length > 0){
+        execFunction(failure,obj);
+      }
     }
   }
 
@@ -34,16 +62,15 @@ var $q = (function (){
 
 //Sample Example showing its usage
 var p1 = $q.defer();
-
-p1.promise.then(function success(obj){
-  return obj.name;
-}).then(function success(name){
-  return {name:name,age:25};
+var p2 = $q.defer();
+p1.then(function success(obj){
+  console.log("resolved p1", obj);
+  return p2;
 }).then(function success(obj){
-  console.log(obj);
-  return obj;
-});
+  console.log("resolved p2",obj);
+})
 
 setTimeout(function(){
-  p1.resolve({name:"sandeep"});
+  p1.resolve({name:"p1"});
+  p2.resolve({name:"p2"});
 },2000);
