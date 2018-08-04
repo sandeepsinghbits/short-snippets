@@ -1,18 +1,12 @@
-import script2 from './script2.js';
+import description from './description.js';
 import Common from '../common/common.js';
 import React from "react";
 import ReactDOM from "react-dom";
 import style from "./style.css";
-import style1 from "./style1.css";
-import style2 from "./style2.css";
-import css from "../common/common.css";
+import color from "./color.css";
+import commonCSS from "../common/common.css";
 
-console.log(script2);
-const name = [1,2,3];
-let some = ()=>{
-
-};
-
+console.log("description",description);
 function* generator(){
 	yield 1;
 	yield 2;
@@ -24,4 +18,4 @@ console.log(itr.next());
 console.log(itr.next());
 console.log(itr.next());
 
-ReactDOM.render(<Common name="home"/>, document.getElementById("home"));
+ReactDOM.render(<Common name="Home"/>, document.getElementById("home"));
