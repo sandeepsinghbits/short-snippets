@@ -113,6 +113,7 @@ function promise(){
   return this;
 }
 
+// Sample Usage
 var p1 = new promise();
 var p2 = new promise();
 var p3 = new promise();
