@@ -1,76 +1,168 @@
-var $q = (function (){
+function promise(){
+  var successFnArr = [];
+  var errorFnArr = [];
+  var interval = null;
+  this.resolvedObj = null;
+  this.rejectObj = null;
+  function isFunc(fn){
+    return typeof fn =='function';
+  }
 
-  function promise(){
-    var success=[];
-    var failure=[];
-    this.resolvedValue =null;
-    var interval = null;
-    function execFunction(iterationArray,resolvedObj){
-      var val = resolvedObj,i=0;
-      function iterate(iteration){
-        val = iteration(val);
-        if(val && val.then){
-          interval = setInterval(function(){
-             if(val.resolvedValue !==null){
-                val = val.resolvedValue;
-                clearInterval(interval);
-                interval = null;
-                i++;
-                if(i<iterationArray.length){
-                  iterate(iterationArray[i]);
-                }
-              
-             }
-          },0);
-        }else if(interval ==null){
-          i++;
-          if(i<iterationArray.length){
-            iterate(iterationArray[i]);
+  function isPromise(obj){
+    return typeof obj =='object' && typeof obj.then == 'function';
+  }
+
+  function iterateSuccess(val,successFnArr,index){
+    var returnVal,pms,runTimeFn,runTimeArr;
+    if(index < successFnArr.length){
+      if(isPromise(val)){
+        interval = setInterval(function(){
+          pms = val.resolvedObj || val.rejectObj;
+          if(pms!=null){
+            runTimeFn = iterateSuccess;
+            runTimeArr = successFnArr;
+            returnVal = pms;
+            if(!isPromise(pms)){
+              if(val.rejectObj !=null){
+                runTimeFn = iterateError;
+                runTimeArr = errorFnArr;
+              }
+              if(isFunc(runTimeFn[index])){
+                returnVal = runTimeFn[index](pms);
+                index++;  
+              }
+               
+            }
+            clearInterval(interval);
+            return runTimeFn(returnVal,runTimeArr,index);
+            
+          }else{
+            clearInterval(interval);
+            return iterateSuccess(val,successFnArr,index);
           }
-        }
-        return;
-      }
-      iterate(iterationArray[i]);
+        },500);
+      }else{
+        returnVal = successFnArr[index](val);
+        return iterateSuccess(returnVal,successFnArr,++index);
+      }  
     }
-    this.then = function(successFn,failureFn){
-        success.push(successFn);
-        failure.push(failureFn);
-        return this;
-      }
-    this.resolve = function(obj){
-      this.resolvedValue = obj;
-      if(success.length > 0){
-        execFunction(success,obj);
-      }
-
-    };
-    this.reject = function(obj){
-      this.resolvedValue = obj;
-      if(failure.length > 0){
-        execFunction(failure,obj);
-      }
+    return;
+    
+  }
+  function iterateError(val,errorFnArr,index){
+    var returnVal,pms,runTimeFn,runTimeArr;
+    if(index < errorFnArr.length){
+      if(isPromise(val)){
+        interval = setInterval(function(){
+          pms = val.resolvedObj || val.rejectObj;
+          if(pms!=null){
+            runTimeFn = iterateSuccess;
+            runTimeArr = successFnArr;
+            returnVal = pms;
+            if(!isPromise(pms)){
+              if(val.rejectObj !=null){
+                runTimeFn = iterateError;
+                runTimeArr = errorFnArr;
+              }
+              if(isFunc(runTimeFn[index])){
+                returnVal = runTimeFn[index](pms);
+                index++;  
+              } 
+            }
+            clearInterval(interval);
+            return runTimeFn(returnVal,runTimeArr,index);
+            
+          }else{
+            clearInterval(interval);
+            return iterateError(val,errorFnArr,index);
+          }
+        },500);
+      }else{
+        returnVal = errorFnArr[index](val);
+        return iterateError(returnVal,errorFnArr,++index);
+      }  
     }
+    return;
+    
   }
 
-  return {
-    defer:function(){
-      return new promise();
+  this.then = function(successFn,errorFn){
+    if(isFunc(successFn)){
+      successFnArr.push(successFn);
     }
-  }
-  
-})();
 
-//Sample Example showing its usage
-var p1 = $q.defer();
-var p2 = $q.defer();
-p1.then(function success(obj){
-  console.log("resolved p1", obj);
-  return p2;
-}).then(function success(obj){
-  console.log("resolved p2",obj);
-})
+    if(isFunc(errorFn)){
+      errorFnArr.push(errorFn);
+    }
+    return this;
+
+  };
+
+  this.resolve = function(resolvedObj){
+    iterateSuccess(resolvedObj,successFnArr,0);
+    this.resolvedObj = resolvedObj; 
+
+  };
+
+  this.reject = function(rejectObj){
+    iterateError(rejectObj,errorFnArr,0);
+    this.rejectObj = rejectObj; 
+
+  };  
+
+  return this;
+}
+
+var p1 = new promise();
+var p2 = new promise();
+var p3 = new promise();
+var p4 = new promise();
+
+p1.then(function success(res){
+  console.log("p1 success : 1",res);
+  return res;
+},function error(res){
+  console.log("p1 error : 1", res);
+  return res;
+}).then(function success(res){
+  console.log("p1 success : 2", res);
+},function error(res){
+  console.log("p1 error : 2", res);
+});
+
+p2.then(function success(res){
+  console.log("p2 succes : 1", res);
+},function error(res){
+  console.log("p2 error : 1", res);
+});
+
+p3.then(function success(res){
+  console.log("p3 success : 1", res);
+},function error(res){
+  console.log("p3 error : 1", res);
+  return p4;
+}).then(function success(res){
+  console.log("p3 success : 2", res);
+},function error(res){
+  console.log("p3 error : 2", res);
+});
+
+p4.then(function success(res){
+  console.log("p4 success : 1", res);
+});
 
 setTimeout(function(){
-  p1.resolve({name:"p1"});
-  p2.resolve({name:"p2"});
+  p1.resolve(p2);
 },2000);
+
+setTimeout(function(){
+  p2.resolve(p3);
+},3000);
+
+setTimeout(function(){
+  p3.reject({data:'p3'});
+},3000);
+
+setTimeout(function(){
+  p4.resolve({data:"p4"});
+},3000);
