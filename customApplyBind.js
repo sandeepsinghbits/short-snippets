@@ -1,6 +1,11 @@
 
 function customBind(context){
 	var func = this;
+	if(context ==null){
+		context = window;
+	}else if(typeof context !='object'){
+		context = Object(context);
+	}
 	var args = Array.prototype.slice.customApply(arguments,[1,arguments.length]);
 
 	return function(){
