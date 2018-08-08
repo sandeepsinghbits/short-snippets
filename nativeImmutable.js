@@ -1,3 +1,4 @@
+//This is the custom implementation for generating immutable objects
 var immutable = (function immutable(){
 	var instance = null;
 
