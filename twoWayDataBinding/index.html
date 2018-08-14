@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+      <meta charset="UTF-8">
+      <title>Two Way Data Binding</title>
+  </head>
+  <body>
+    FirstName: <input type="text" two-way-bind="fname">
+    Age : <input type="text" two-way-bind="age">
+    <div>Name Entered By User:<span two-way-bind="fname"></span></div>
+    <div>Age Entered By User:<span two-way-bind="age"></span></div>
+    <button onclick="changeUserName()">Change Username</button>
+    <script src="app.js"></script>
+  </body>
+</html>
