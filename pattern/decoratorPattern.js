@@ -5,51 +5,40 @@ The idea was that the decoration itself wasn't essential to the base functionali
 
 //refactor this
 
-function MacBook() {
+function AlienWare() {
  
-  this.cost = function () { return 997; };
-  this.screenSize = function () { return 11.6; };
+  this.cost = function () { return 10000; };
+  this.screenSize = function () { return 15.6; };
  
 }
  
 // Decorator 1
-function memory( macbook ) {
+function memory( alienware ) {
  
-  var v = macbook.cost();
-  macbook.cost = function() {
-    return v + 75;
+  var c = alienware.cost();
+  alienware.cost = function() {
+    return c + 7500;
   };
  
 }
+
  
 // Decorator 2
-function engraving( macbook ){
+function insurance( alienware ){
  
-  var v = macbook.cost();
-  macbook.cost = function(){
-    return v + 200;
+  var c = alienware.cost();
+  alienware.cost = function(){
+     return c + 2500;
   };
  
 }
  
-// Decorator 3
-function insurance( macbook ){
+var al = new AlienWare();
+memory( al );
+engraving( al );
+insurance( al );
  
-  var v = macbook.cost();
-  macbook.cost = function(){
-     return v + 250;
-  };
+console.log( al.cost() );
  
-}
- 
-var mb = new MacBook();
-memory( mb );
-engraving( mb );
-insurance( mb );
- 
-// Outputs: 1522
-console.log( mb.cost() );
- 
-// Outputs: 11.6
-console.log( mb.screenSize());
+console.log( al.screenSize());
 
