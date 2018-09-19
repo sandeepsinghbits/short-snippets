@@ -1,0 +1,23 @@
+.imgContainer{
+	height:100%;
+}
+
+.image{
+	height: 100%;
+	width:100%;
+}
+
+.scroll{
+	height:100%;
+	overflow:scroll;
+}
+
+.hidden{
+	visibility: hidden;
+}
+
+.loader{
+	background-image: url(Loading_icon.gif);
+    background-position: center center;
+    background-repeat: no-repeat;
+}
