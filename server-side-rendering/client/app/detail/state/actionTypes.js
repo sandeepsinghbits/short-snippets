@@ -1,0 +1,2 @@
+
+export const FETCH_AVENGER_DETAIL = 'detail/FETCH_AVENGER_DETAIL';
