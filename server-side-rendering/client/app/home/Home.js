@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-  import { connect } from 'react-redux';
+//   import { connect } from 'react-redux';
 import {fetchAvengers} from './state/sideEffects';
-
+import connect from '../../connect.js';
 class Home extends Component{
     static fetchInitialData({dispatch}){
         return [dispatch(fetchAvengers())];
@@ -26,6 +26,7 @@ class Home extends Component{
 }
 
 function mapStateToProps(state){
+    console.log(state);
     return {
         avengers: state.home.avengers
     }

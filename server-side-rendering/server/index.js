@@ -24,7 +24,7 @@ app.get('/avenger/:id', function(req,res){
 app.get('*', async (req, res) => {
   const store = configureStore();
   const actionsArray = matchRoutes(Routes, req.path)
-    .map(({ route }) => route.component.fetchInitialData ? route.component.fetchInitialData({...store, path: req.path }) : [])
+    .map(({ route }) => route.component && route.component.fetchInitialData ? route.component.fetchInitialData({...store, path: req.path }) : [])
     .reduce((accumulator,actions)=>{
         return [...accumulator,...actions];
     },[]);

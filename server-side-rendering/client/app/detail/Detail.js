@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-  import { connect } from 'react-redux';
+//   import { connect } from 'react-redux';
 import {fetchAvengerDetail} from './state/sideEffects';
+import connect from '../../connect.js';
 
 class Detail extends Component{
     static fetchInitialData({dispatch, path}){
